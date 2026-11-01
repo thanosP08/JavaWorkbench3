@@ -5,13 +5,14 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-// TODO 1: Meta-annotations
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE,ElementType.METHOD})
 @interface SessionInfo {
     String name();
     int threshold() default 3;
 }
 
-// TODO 2: Annotation στην κλάση
+@SessionInfo(name = "Session Diversity", threshold = 4)
 class SessionWorker implements Runnable {
 
     private final int[] pages;
@@ -26,19 +27,28 @@ class SessionWorker implements Runnable {
         result = longestUniqueWindow(pages);
     }
 
-    // TODO 2: Annotation στη μέθοδο
+    @SessionInfo(name = "Unique Window Algorithm", threshold = 3)
     static int longestUniqueWindow(int[] pages) {
+        HashSet<Integer> set = new HashSet<>();
+        int left = 0;
+        int max = 0;
+        for (int right = 0; right < pages.length; right++) {
+            while (set.contains(pages[right])) {
+                set.remove(pages[left]);
+                left++;
+            }
+            set.add(pages[right]);
 
-        // TODO 4: Αλγόριθμος
-
-        return 0;
+            max = Math.max(max, right - left + 1);
+        }
+        return max;
     }
 
     int getResult() {
         return result;
     }
 
-    // TODO 2: Deprecated annotation
+    @Deprecated
     static int oldScore(int[] pages) {
         return pages.length;
     }
@@ -46,7 +56,7 @@ class SessionWorker implements Runnable {
 
 public class ask6 {
 
-    // TODO 2: SuppressWarnings
+    @SuppressWarnings("deprecation")
     public static void main(String[] args)
             throws Exception {
 
@@ -59,11 +69,43 @@ public class ask6 {
         Thread t1 = new Thread(w1);
         Thread t2 = new Thread(w2);
 
-        // TODO 5: Εκτέλεση threads
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
 
-        // TODO 3: Reflection
+        // 1. Παίρνουμε το annotation της κλάσης
+        SessionInfo classInfo =
+                SessionWorker.class.getAnnotation(SessionInfo.class);
 
-        // TODO 3: Έλεγχος αποτελεσμάτων
+        System.out.println("Class: " + classInfo.name());
+        System.out.println("Threshold: " + classInfo.threshold());
+
+
+        // 2. Βρίσκουμε τη μέθοδο μέσω Reflection
+        Method method = SessionWorker.class.getDeclaredMethod(
+                "longestUniqueWindow", int[].class
+        );
+
+        // 3. Παίρνουμε το annotation της μεθόδου
+        SessionInfo methodInfo =
+                method.getAnnotation(SessionInfo.class);
+
+        System.out.println("Method: " + methodInfo.name());
+
+
+        // 4. Χρησιμοποιούμε το threshold της ΚΛΑΣΗΣ
+        int threshold = classInfo.threshold();
+
+        System.out.println(
+                "Worker 1: " +
+                        (w1.getResult() >= threshold ? "PASS" : "REVIEW")
+        );
+
+        System.out.println(
+                "Worker 2: " +
+                        (w2.getResult() >= threshold ? "PASS" : "REVIEW")
+        );
 
     }
 }
