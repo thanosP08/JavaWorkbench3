@@ -1,7 +1,11 @@
 package java2_3_1.ask;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+
+import static java.util.Collections.swap;
 
 public class MainCodePad {
 
@@ -49,57 +53,33 @@ public class MainCodePad {
         marge(arr, left, mid, right);
     }
 
-    static int longestConsecutive(int[] nums) {
-
-        if (nums.length == 0) {
-            return 0;
+    static void QS(ArrayList<Long> arr, int left, int right) {
+        if (left >= right) {
+            return;
         }
-        int[] copyArr = Arrays.copyOf(nums, nums.length);
-        MyMergeSort(copyArr, 0, copyArr.length - 1);
-        int max = 1;
-        int current = 1;
-        for (int i = 1; i < copyArr.length; i++) {
-            if (copyArr[i] == copyArr[i - 1]) {
-                continue;
-            }
-            if ((long) copyArr[i] == (long) copyArr[i - 1] + 1) {
-                current++;
-            } else {
-                current = 1;
-            }
-            max = Math.max(max, current);
-        }
-        return max;
+        int pivot = Par(arr,left,right);
+        QS(arr,left,pivot - 1);
+        QS(arr,pivot + 1,right);
     }
-
-    static int longestConsecutive_top(int[] nums) {
-
-        HashSet<Integer> set = new HashSet<>();
-        for (int num : nums) {
-            set.add(num);
-        }
-        int max = 0;
-        for (int num : set) {
-            // Ξεκινάμε μόνο από την αρχή μιας ακολουθίας
-            if (num != Integer.MIN_VALUE && set.contains(num - 1)) {
-                continue;
+    static int Par(ArrayList<Long> arr,int left,int right) {
+        int i = left-1;
+        long pivot = arr.get(right);
+        for (int j = left; j<right; j++) {
+            if (arr.get(j) <= pivot ) {
+                i++;
+                swap(arr,i,j);
             }
-            int current = num;
-            int length = 1;
-            while (current != Integer.MAX_VALUE && set.contains(current + 1)) {
-
-                current++;
-                length++;
-            }
-            max = Math.max(max, length);
         }
-        return max;
+        swap(arr,i+1,right);
+        return i+1;
     }
 
     public static void main(String[] args) {
         int[] arr = new int[] {10,90,1,5,4,80,3,100,6,19999,100,100};
-        System.out.println(longestConsecutive(arr));
-        MyMergeSort(arr, 0, arr.length-1);
-        System.out.println(Arrays.toString(arr));
+        ArrayList<Long> arr1 =  new ArrayList<>(List.of(10111L,90L,1L,5L,4L,80L,3L,100L,6L,19999L,100L,100L));
+        System.out.println(arr1);
+        QS(arr1, 0, arr.length-1);
+        System.out.println(arr1);
+
     }
 }
