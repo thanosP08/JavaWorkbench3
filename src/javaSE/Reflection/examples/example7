@@ -1,0 +1,38 @@
+JAVA SE 3.5 — REFLECTION
+Ενότητα 7: Πίνακας όλων των βασικών εντολών
+============================================
+
+ΕΝΤΟΛΗ                               | ΤΙ ΚΑΝΕΙ
+-------------------------------------|--------------------------------------------
+obj.getClass()                       | Βρίσκει την πραγματική κλάση αντικειμένου.
+ClassName.class                      | Παίρνει το αντικείμενο Class ενός γνωστού τύπου.
+Class.forName(name)                  | Εντοπίζει κλάση από το όνομά της.
+getName()                            | Πλήρες όνομα τύπου.
+getFields()                          | Public πεδία.
+getDeclaredFields()                  | Πεδία που δηλώνονται στην κλάση.
+getField(name)                       | Συγκεκριμένο public πεδίο.
+getDeclaredField(name)               | Συγκεκριμένο δηλωμένο πεδίο.
+field.get(obj)                       | Ανάγνωση τιμής πεδίου.
+field.set(obj, value)                | Τροποποίηση τιμής πεδίου.
+setAccessible(true)                  | Ζητά παράκαμψη ελέγχων πρόσβασης (όπου επιτρέπεται).
+getConstructor(types...)             | Βρίσκει public constructor.
+newInstance(args...)                 | Δημιουργεί αντικείμενο μέσω Constructor.
+getMethods()                         | Public μέθοδοι.
+getDeclaredMethods()                 | Μέθοδοι που δηλώνονται στην κλάση.
+getMethod(name, types...)            | Βρίσκει public μέθοδο.
+getDeclaredMethod(name, types...)    | Βρίσκει δηλωμένη μέθοδο.
+method.invoke(obj, args...)          | Καλεί μέθοδο δυναμικά.
+getPackage()                         | Πληροφορίες package.
+getModule()                          | Πληροφορίες module.
+getInterfaces()                      | Interfaces που υλοποιεί άμεσα η κλάση.
+getEnumConstants()                   | Σταθερές enum.
+getAnnotation(type)                  | Αναζητά annotation.
+Array.newInstance(type, n)           | Δημιουργεί πίνακα.
+Array.get(array, index)              | Διαβάζει στοιχείο πίνακα.
+Array.set(array, index, value)       | Τροποποιεί στοιχείο πίνακα.
+
+ΣΗΜΕΙΩΣΗ:
+- get...() συνήθως αναζητά δημόσια μέλη, συχνά και κληρονομημένα.
+- getDeclared...() αναζητά μέλη που δηλώνονται στη συγκεκριμένη κλάση,
+  ακόμη και μη δημόσια, αλλά όχι κληρονομημένα.
+- Το javaSE.Annotations.Reflection χρησιμοποιείται για δυναμική επιθεώρηση και χρήση κλάσεων.
