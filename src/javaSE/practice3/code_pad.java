@@ -49,7 +49,6 @@ public class code_pad {
         for (String source : sources) {
             alerts.add(new Alert(source, "test"));
         }
-
         int actual = longestUniqueSources(alerts);
 
         System.out.println("TEST " + testNumber);
