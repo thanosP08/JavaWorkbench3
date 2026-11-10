@@ -1,17 +1,13 @@
 
 package javaSE.practice3;
 
-import java.util.regex.*;
-import java.lang.annotation.*;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-@interface ScanRule1 {}
+import java.util.*;
 
 public class code_pad {
 
     static class Alert {
-        String source, detail;
+        String source;
+        String detail;
 
         Alert(String source, String detail) {
             this.source = source;
@@ -24,36 +20,82 @@ public class code_pad {
         }
     }
 
-    @ScanRule1
-    static Alert checkAuth(String log) {
-        Pattern regex = Pattern.compile("^(AUTH);user=([a-z|0-9]{3,12});stuts=FAIL");
-        Matcher matcher = regex.matcher(log);
-
-        if (matcher.find()) {
-            return new Alert(matcher.group(1), matcher.group(2));
+    static int longestUniqueSources(List<Alert> alerts) {
+        // Question B: Implement the sliding window algorithm.
+        int max=0,n = alerts.size(),i=0,max_now=0;
+        HashSet<String> uniqueSources = new HashSet<>();
+        for (Alert alert : alerts) {
+            System.out.println(uniqueSources.contains(alert.source));
+            if (uniqueSources.contains(alert.source)) {
+                uniqueSources.clear();
+                if (max_now > max) {
+                    max = max_now;
+                }
+                max_now =1;
+            } else {
+                max_now++;
+            }
+            uniqueSources.add(alert.source);
         }
-        return null;
+        if (max_now > max) {
+            max = max_now;
+        }
+        return max;
     }
 
-    static void test(String log, String expected) {
-        Alert alert = checkAuth(log);
-        String actual = alert == null ? "null" : alert.toString();
+    static void test(int testNumber, int expected, String... sources) {
+        List<Alert> alerts = new ArrayList<>();
 
-        System.out.println("Input:    " + log);
+        for (String source : sources) {
+            alerts.add(new Alert(source, "test"));
+        }
+
+        int actual = longestUniqueSources(alerts);
+
+        System.out.println("TEST " + testNumber);
+        System.out.println("Input:    " + Arrays.toString(sources));
         System.out.println("Expected: " + expected);
         System.out.println("Actual:   " + actual);
-        System.out.println("PASS: " + expected.equals(actual));
-        System.out.println("--------------------------");
+        System.out.println("PASS: " + (expected == actual));
+        System.out.println("------------------------------");
     }
 
     public static void main(String[] args) {
-        test("AUTH;user=alex;status=FAIL", "AUTH(alex)");
-        test("AUTH;user=anna_1;status=FAIL", "AUTH(anna_1)");
-        test("AUTH;user=alex;status=OK", "null");
-        test("AUTH;user=ab;status=FAIL", "null");
-        test("AUTH;user=1alex;status=FAIL", "null");
-        test("API;user=alex;status=FAIL", "null");
-        test("AUTH;user=alex;stuts=FAIL", "null");
-        test("AUTH;user=alex;status=FAIL;extra", "null");
+
+        test(1, 0);
+
+        test(2, 1, "AUTH");
+
+        test(3, 3,
+                "AUTH", "API", "DB");
+
+        test(4, 1,
+                "AUTH", "AUTH", "AUTH");
+
+        test(5, 3,
+                "AUTH", "API", "AUTH", "DB", "API");
+
+        test(6, 3,
+                "API", "DB", "API", "AUTH");
+
+        test(7, 2,
+                "DB", "API", "DB", "API");
+
+        test(8, 3,
+                "AUTH", "API", "DB", "AUTH");
+
+        test(9, 4,
+                "AUTH", "API", "DB", "PAYMENT");
+
+        test(10, 4,
+                "AUTH", "API", "AUTH",
+                "DB", "PAYMENT", "API");
+
+        test(11, 3,
+                "A", "B", "C", "B", "C", "D");
+
+        test(12, 2,
+                "AUTH", "AUTH", "API");
     }
 }
+
